@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    volumes:
+      - /srv/pg:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: "localhost"
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 15s
+      retries: 5
+  
+  backend:
+    build: .
+    image: rpl-cuciin
+    ports:
+      - '8080:8080/tcp'
+    depends_on:
+      database:
+        condition: service_healthy
+    env_file:
+      - .env
