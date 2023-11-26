@@ -23,7 +23,10 @@ var (
 )
 
 func Init() {
-	_db, err := gorm.Open(getDBConnection(os.Getenv("DB_STATE")))
+	_db, err := gorm.Open(
+		getDBConnection(os.Getenv("DB_STATE")),
+		&gorm.Config{TranslateError: true},
+	)
 	if err != nil {
 		panic("Database connection failed: " + err.Error())
 	}
@@ -58,7 +61,7 @@ func getDBConnection(connection string) gorm.Dialector {
 		return postgres.Open(buildConnectionString())
 	}
 
-	panic(fmt.Sprintf("Invalida database connection: %s", connection))
+	panic(fmt.Sprintf("Invalid database connection: %s", connection))
 }
 
 func buildConnectionString() string {

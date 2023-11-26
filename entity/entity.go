@@ -9,8 +9,8 @@ import (
 type Partner struct {
 	gorm.Model
 	Name        string
-	PhoneNumber string
-	Email       string
+	PhoneNumber string `gorm:"uniqueIndex"`
+	Email       string `gorm:"uniqueIndex"`
 	Password    string
 	MapLink     string
 
@@ -19,9 +19,10 @@ type Partner struct {
 
 type Customer struct {
 	gorm.Model
-	Name     string
-	Email    string
-	Password string
+	Name        string
+	PhoneNumber string `gorm:"uniqueIndex"`
+	Email       string `gorm:"uniqueIndex"`
+	Password    string
 
 	Orders []Order
 }
