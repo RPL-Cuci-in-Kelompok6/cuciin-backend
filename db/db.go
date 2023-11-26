@@ -55,7 +55,7 @@ func getDBConnection(connection string) gorm.Dialector {
 	switch connection {
 	case CONNECTION_DEV:
 		return sqlite.Open("file::memory:?cache=shared")
-	case CONNECTION_DEV_PRESISTENT:
+	case CONNECTION_DEV_PERSISTENT:
 		return sqlite.Open("data.db")
 	case CONNECTION_PROD:
 		return postgres.Open(buildConnectionString())
