@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	CONNECTION_PROD           = "prod"
-	CONNECTION_DEV            = "dev"
-	CONNECTION_DEV_PRESISTENT = "dev-presist"
+	CONNECTION_PROD           = "production"
+	CONNECTION_DEV            = "development"
+	CONNECTION_DEV_PERSISTENT = "dev-persistent"
 )
 
 var (
