@@ -32,12 +32,16 @@ type Service struct {
 	Price uint64
 
 	WashingMachines []WashingMachine
+
+	PartnerID uint
 }
 
 type WashingMachine struct {
 	gorm.Model
 	AvailableAt time.Time
 	Brand       string
+
+	ServiceID uint
 }
 
 type Order struct {
@@ -47,10 +51,16 @@ type Order struct {
 	TotalPrice    uint64
 
 	Payment Payment
-	Machine WashingMachine
+
+	MachineID uint
+	Machine   WashingMachine
+
+	CustomerID uint
 }
 
 type Payment struct {
 	gorm.Model
 	Status bool
+
+	OrderID uint
 }

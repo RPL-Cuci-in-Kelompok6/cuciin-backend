@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/RPL-Cuci-in-Kelompok6/cuciin-backend/db"
 	"github.com/gin-gonic/gin"
@@ -18,4 +20,7 @@ func main() {
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "%s", "Pong")
 	})
+
+	listenAddress := fmt.Sprintf("%s:%s", os.Getenv("ADDRESS"), os.Getenv("PORT"))
+	r.Run(listenAddress)
 }

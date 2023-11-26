@@ -28,13 +28,13 @@ func Init() {
 		panic("Database connection failed: " + err.Error())
 	}
 
-	err = db.AutoMigrate(
+	err = _db.AutoMigrate(
+		&entity.Payment{},
+		&entity.WashingMachine{},
+		&entity.Service{},
+		&entity.Order{},
 		&entity.Partner{},
 		&entity.Customer{},
-		&entity.Service{},
-		&entity.WashingMachine{},
-		&entity.Order{},
-		&entity.Payment{},
 	)
 	if err != nil {
 		panic("Failed to migrate database: " + err.Error())
