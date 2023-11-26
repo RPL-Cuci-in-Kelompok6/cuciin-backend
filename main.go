@@ -24,6 +24,8 @@ func main() {
 
 	r.POST("/customer/register", routes.RegisterUser(true))
 	r.POST("/mitra/register", routes.RegisterUser(false))
+	r.POST("/customer/login", routes.LoginUser(true))
+	r.POST("/mitra/login", routes.LoginUser(false))
 
 	listenAddress := fmt.Sprintf("%s:%s", os.Getenv("ADDRESS"), os.Getenv("PORT"))
 	r.Run(listenAddress)

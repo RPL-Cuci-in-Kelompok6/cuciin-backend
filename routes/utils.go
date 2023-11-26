@@ -6,6 +6,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -32,10 +33,15 @@ func bindBodyOrError(c *gin.Context, body any) error {
 	return err
 }
 
+func validatePassword(input, target string) bool {
+	return input == target
+}
+
 func generateJWT(userID uint, userRole int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":   userID,
 		"role": userRole,
+		"exp":  time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	secret := []byte(os.Getenv("JWT_SECRET"))
