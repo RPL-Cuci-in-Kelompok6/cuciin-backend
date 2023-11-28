@@ -37,6 +37,10 @@ func main() {
 	r.POST("/customer/login", routes.LoginUser(true))
 	r.POST("/mitra/login", routes.LoginUser(false))
 
+	r.GET("/customer/mitra", routes.GetPartners())
+	r.POST("/customer/mitra/services", routes.GetServicesByPartner())
+	r.POST("/customer/order/create", routes.CreateOrder())
+
 	listenAddress := fmt.Sprintf("%s:%s", os.Getenv("ADDRESS"), os.Getenv("PORT"))
 	r.Run(listenAddress)
 }
