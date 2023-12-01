@@ -51,12 +51,14 @@ type Order struct {
 	Status        string
 	TotalPrice    uint64
 
-	Payment Payment
+	PaymentStatus bool
+	Payment       Payment
 
 	MachineID uint
 	Machine   WashingMachine
 
 	CustomerID uint
+	Customer   Customer
 }
 
 type Payment struct {

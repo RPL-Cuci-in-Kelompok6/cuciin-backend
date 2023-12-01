@@ -16,6 +16,7 @@ func main() {
 	godotenv.Load(".env")
 
 	db.Init()
+	db.MigrateDummy()
 
 	r := gin.Default()
 
@@ -32,10 +33,25 @@ func main() {
 		c.String(http.StatusOK, "%s", "You are authorized as mitra")
 	})
 
+	// User Registration & Login
 	r.POST("/customer/register", routes.RegisterUser(true))
 	r.POST("/mitra/register", routes.RegisterUser(false))
 	r.POST("/customer/login", routes.LoginUser(true))
 	r.POST("/mitra/login", routes.LoginUser(false))
+
+	// Customers
+	r.GET("/customer/mitra", routes.GetPartners())
+	r.POST("/customer/mitra/services", routes.GetServicesByPartner())
+	r.POST("/customer/order", routes.GetOrdersByCustomer())
+	r.POST("/customer/order/create", routes.CreateOrder())
+	r.POST("/customer/order/cancel", routes.CancelOrder())
+	r.POST("/customer/order/pay", routes.PayOrder())
+
+	// Partners
+	r.POST("/mitra/service", routes.CreateService)
+	r.DELETE("/mitra/service/:service_id", routes.DeleteService)
+	r.POST("/mitra/machine", routes.CreateMachine)
+	r.DELETE("/mitra/machine/:machine_id", routes.DeleteMachine)
 
 	listenAddress := fmt.Sprintf("%s:%s", os.Getenv("ADDRESS"), os.Getenv("PORT"))
 	r.Run(listenAddress)

@@ -11,8 +11,8 @@ import (
 )
 
 type LoginBody struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func LoginUser(createCustomer bool) func(*gin.Context) {
@@ -57,6 +57,7 @@ func LoginUser(createCustomer bool) func(*gin.Context) {
 			"success": true,
 			"message": "Login success.",
 			"token":   token,
+			"id":      id,
 		})
 	}
 }

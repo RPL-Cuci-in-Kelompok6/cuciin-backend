@@ -11,10 +11,10 @@ import (
 )
 
 type RegisterBody struct {
-	Name        string `json:"nama"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	PhoneNumber string `json:"telpon"`
+	Name        string `json:"nama" binding:"required"`
+	Email       string `json:"email" binding:"required"`
+	Password    string `json:"password" binding:"required"`
+	PhoneNumber string `json:"telpon" binding:"required"`
 }
 
 func RegisterUser(createCustomer bool) func(*gin.Context) {
@@ -63,6 +63,7 @@ func RegisterUser(createCustomer bool) func(*gin.Context) {
 			"registered": true,
 			"message":    "User registered successfully",
 			"token":      token,
+			"id":         id,
 		})
 	}
 }
