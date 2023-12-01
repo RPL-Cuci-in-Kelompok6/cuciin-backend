@@ -75,3 +75,7 @@ func buildConnectionString() string {
 		"host=%s user=%s password=%s dbname=%s port=%s",
 		host, user, password, dbname, port)
 }
+
+func MigrateDummy() {
+	insertDataDummy()
+}
