@@ -67,3 +67,24 @@ func PayOrder() gin.HandlerFunc {
 		})
 	}
 }
+
+func CancelOrder() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var pay PayBody
+		if err := bindBodyOrError(c, &pay); err != nil {
+			return
+		}
+		result := db.GetConnection().Table("orders").Where("id = ?", pay.OrderID).Update("status", ORDER_CANCELED)
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": "Failed to update your order. Please try again later",
+			})
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "Your order has been canceled",
+		})
+	}
+}
