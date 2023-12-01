@@ -10,13 +10,13 @@ import (
 
 type BaseProfileResponse struct {
 	ID          uint   `json:"id"`
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
+	Name        string `json:"nama"`
+	PhoneNumber string `json:"telepon"`
 	Email       string `json:"email"`
 }
 
 type RequestBody struct {
-	Email string `json:"email"`
+	Email string `json:"email" binding:"required"`
 }
 
 func GetProfile(role int) gin.HandlerFunc {

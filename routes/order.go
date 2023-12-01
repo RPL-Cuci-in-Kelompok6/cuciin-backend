@@ -9,14 +9,14 @@ import (
 )
 
 type OrderBody struct {
-	CustomerEmail string `json:"customer_email"`
-	TotalPrice    uint64 `json:"total_price"`
-	MachineID     uint   `json:"machine_id"`
-	CustomerID    uint   `json:"customer_id"`
+	CustomerEmail string `json:"email" binding:"required"`
+	TotalPrice    uint64 `json:"harga" binding:"required"`
+	MachineID     uint   `json:"id-mesin" binding:"required"`
+	CustomerID    uint   `json:"id-customer" binding:"required"`
 }
 
 type PayBody struct {
-	OrderID uint `json:"order_id"`
+	OrderID uint `json:"id-pesanan" binding:"required"`
 }
 
 func CreateOrder() gin.HandlerFunc {
@@ -39,10 +39,18 @@ func CreateOrder() gin.HandlerFunc {
 
 		if result.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"success": "false",
+				"success": false,
 				"message": "Failed to create order. Please try again later",
 			})
 		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "Order created successfully",
+			"data": gin.H{
+				"id": newOrder.ID,
+			},
+		})
 	}
 }
 
@@ -52,15 +60,28 @@ func PayOrder() gin.HandlerFunc {
 		if err := bindBodyOrError(c, &pay); err != nil {
 			return
 		}
-		result := db.GetConnection().Table("orders").Where("id = ?", pay.OrderID).Update("payment_status", PAYMENT_PAID)
 
-		if result.Error != nil {
+		var order entity.Order
+		if err := db.GetConnection().Preload("Payment").Where("id = ?", pay.OrderID).First(&order).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
-				"message": "Failed to verify your payment. Please try again later",
+				"message": "Failed to fetch the order. Please try again later",
 			})
 			return
 		}
+
+		order.Status = ORDER_COMPLETED
+		order.PaymentStatus = PAYMENT_PAID
+		order.Payment.Status = true
+
+		if err := db.GetConnection().Save(&order).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": "Failed to update order status. Please try again later",
+			})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "Your payment has been received.",

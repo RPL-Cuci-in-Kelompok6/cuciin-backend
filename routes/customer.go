@@ -10,32 +10,28 @@ import (
 )
 
 type PartnerServiceBody struct {
-	PartnerID uint `json:"partner_id"`
+	PartnerID uint `json:"id-mitra" binding:"required"`
 }
 
 type PartnerResponse struct {
 	ID          uint   `json:"id"`
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
+	Name        string `json:"nama"`
+	PhoneNumber string `json:"telepon"`
 	Email       string `json:"email"`
-	MapLink     string `json:"map_link"`
+	MapLink     string `json:"link-map"`
 }
 
 type MachinesResponse struct {
 	ID          uint      `json:"id"`
-	AvailableAt time.Time `json:"available_at"`
-	Brand       string    `json:"brand"`
+	AvailableAt time.Time `json:"waktu-tersedia"`
+	Brand       string    `json:"merk"`
 }
 
 type ServiceResponse struct {
 	ID              uint               `json:"id"`
-	Name            string             `json:"name"`
-	Price           uint64             `json:"price"`
-	WashingMachines []MachinesResponse `json:"machines"`
-}
-
-type OrderQuery struct {
-	CustomerID uint `json:"customer_id"`
+	Name            string             `json:"nama"`
+	Price           uint64             `json:"harga"`
+	WashingMachines []MachinesResponse `json:"mesin"`
 }
 
 func GetPartners() gin.HandlerFunc {
@@ -63,8 +59,10 @@ func GetPartners() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"success":  true,
-			"partners": partnerResponse,
+			"success": true,
+			"data": gin.H{
+				"mitra": partnerResponse,
+			},
 		})
 	}
 }
@@ -108,10 +106,24 @@ func GetServicesByPartner() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"success":  true,
-			"services": response,
+			"success": true,
+			"data": gin.H{
+				"layanan": response,
+			},
 		})
 	}
+}
+
+type OrderQuery struct {
+	CustomerID uint `json:"id-customer" binding:"required"`
+}
+
+type OrderResponse struct {
+	ID         int    `json:"id"`
+	Status     string `json:"status"`
+	TotalPrice uint64 `json:"total-harga"`
+	Paid       bool   `json:"sudah-bayar"`
+	Machine    int    `josn:"id-mesin"`
 }
 
 func GetOrdersByCustomer() gin.HandlerFunc {
@@ -123,12 +135,30 @@ func GetOrdersByCustomer() gin.HandlerFunc {
 
 		var orders []*entity.Order
 
-		if err := db.GetConnection().Where(&entity.Order{CustomerID: query.CustomerID}).Find(&orders); err != nil {
+		if result := db.GetConnection().Preload("Payment").Where(&entity.Order{CustomerID: query.CustomerID}).Find(&orders); result.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
 				"message": "Failed to get orders, please try again later",
 			})
 			return
 		}
+
+		var response []OrderResponse
+		for _, order := range orders {
+			response = append(response, OrderResponse{
+				ID:         int(order.ID),
+				Status:     order.Status,
+				Paid:       order.Payment.Status,
+				TotalPrice: order.TotalPrice,
+				Machine:    int(order.Machine.ID),
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data": gin.H{
+				"pesanan": response,
+			},
+		})
 	}
 }
