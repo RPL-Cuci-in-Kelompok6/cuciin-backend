@@ -42,6 +42,7 @@ func CreateOrder() gin.HandlerFunc {
 				"success": false,
 				"message": "Failed to create order. Please try again later",
 			})
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
@@ -102,7 +103,9 @@ func CancelOrder() gin.HandlerFunc {
 				"success": false,
 				"message": "Failed to update your order. Please try again later",
 			})
+			return
 		}
+		
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "Your order has been canceled",
