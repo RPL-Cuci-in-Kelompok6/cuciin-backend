@@ -38,6 +38,8 @@ func main() {
 	r.POST("/mitra/register", routes.RegisterUser(false))
 	r.POST("/customer/login", routes.LoginUser(true))
 	r.POST("/mitra/login", routes.LoginUser(false))
+	r.POST("/customer/profile", routes.GetProfile(routes.ROLE_CUSTOMER))
+	r.POST("/mitra/profile", routes.GetProfile(routes.ROLE_PARTNER))
 
 	// Customers
 	r.GET("/customer/mitra", routes.GetPartners())
